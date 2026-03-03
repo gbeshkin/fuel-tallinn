@@ -3,45 +3,91 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Цены на топливо — Таллинн</title>
+  <title>Fuel prices — Tallinn</title>
+
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }
-    .meta { color: #555; margin-bottom: 16px; line-height: 1.5; }
-    table { border-collapse: collapse; width: 100%; max-width: 980px; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle; }
-    th { background: #f6f6f6; }
-    .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .cell { display: inline-flex; gap: 10px; align-items: baseline; justify-content: flex-end; width: 100%; }
-    .delta { font-size: 12px; }
-    .up { color: #b00020; }
-    .down { color: #0a7a0a; }
-    .same { color: #666; }
-    .new { color: #666; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; }
+    .lang button { margin-left:8px; padding:6px 10px; cursor:pointer; }
+    .meta { color:#555; margin:16px 0; line-height:1.5; }
+    table { border-collapse: collapse; width:100%; max-width:980px; }
+    th, td { border:1px solid #ddd; padding:10px; text-align:left; }
+    th { background:#f6f6f6; }
+    .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .up { color:#b00020; }
+    .down { color:#0a7a0a; }
+    .same { color:#666; }
   </style>
 </head>
-<body>
-  <h1>Цены на топливо — Таллинн</h1>
-  <div class="meta">
-    Источник: <a href="https://www.1182.ee/fuelprices">https://www.1182.ee/fuelprices</a><br/>
-    Данные “as of”: <b>3/3/26</b><br/>
-    Обновлено (UTC): <b>2026-03-03T12:35:13+00:00</b>
-  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Сеть / станция</th>
-        <th class="num">95</th>
-        <th class="num">98</th>
-        <th class="num">Diesel</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Krooning Hiiu Pärnu mnt 327a</td><td class='num'><span class='cell'><span>1.494</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.499</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.434</span><span class='delta new'>● —</span></span></td></tr>
-<tr><td>Alexela Ehitajate tee 114c</td><td class='num'><span class='cell'><span>1.579</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.639</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.529</span><span class='delta new'>● —</span></span></td></tr>
-<tr><td>Olerex Laki 29</td><td class='num'><span class='cell'><span>1.579</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.579</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.529</span><span class='delta new'>● —</span></span></td></tr>
-<tr><td>Circle K Sõpruse pst. 200b</td><td class='num'><span class='cell'><span>1.579</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.639</span><span class='delta new'>● —</span></span></td><td class='num'><span class='cell'><span>1.529</span><span class='delta new'>● —</span></span></td></tr>
-    </tbody>
-  </table>
+<body>
+
+<div class="topbar">
+  <h1 id="title"></h1>
+  <div class="lang">
+    <button onclick="setLang('ru')">RU</button>
+    <button onclick="setLang('et')">ET</button>
+  </div>
+</div>
+
+<div class="meta">
+  <span id="sourceLabel"></span>: <a href="https://www.1182.ee/fuelprices">https://www.1182.ee/fuelprices</a><br/>
+  <span id="asofLabel"></span>: <b>3/3/26</b><br/>
+  <span id="updatedLabel"></span> (UTC): <b>2026-03-03T12:41:07+00:00</b>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th id="stationHeader"></th>
+      <th class="num">95</th>
+      <th class="num">98</th>
+      <th class="num">Diesel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Krooning Hiiu Pärnu mnt 327a</td><td class='num'>1.494 <span class='same'>● 0.000</span></td><td class='num'>1.499 <span class='same'>● 0.000</span></td><td class='num'>1.434 <span class='same'>● 0.000</span></td></tr>
+<tr><td>Alexela Ehitajate tee 114c</td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.639 <span class='same'>● 0.000</span></td><td class='num'>1.529 <span class='same'>● 0.000</span></td></tr>
+<tr><td>Olerex Laki 29</td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.529 <span class='same'>● 0.000</span></td></tr>
+<tr><td>Circle K Sõpruse pst. 200b</td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.639 <span class='same'>● 0.000</span></td><td class='num'>1.529 <span class='same'>● 0.000</span></td></tr>
+  </tbody>
+</table>
+
+<script>
+const translations = {
+  ru: {
+    title: "Цены на топливо в Таллинн",
+    asof: "Данные “as of”",
+    updated: "Обновлено",
+    station: "Сеть / станция"
+  },
+  et: {
+    title: "Kütusehinnad Tallinn",
+    asof: "Andmed “seisuga”",
+    updated: "Uuendatud",
+    station: "Võrk / tankla"
+  }
+}
+
+function setLang(lang) {
+  localStorage.setItem("lang", lang)
+  applyLang(lang)
+}
+
+function applyLang(lang) {
+  const t = translations[lang]
+
+  document.documentElement.lang = lang
+  document.getElementById("title").innerText = t.title
+  document.getElementById("sourceLabel").innerText = t.source
+  document.getElementById("asofLabel").innerText = t.asof
+  document.getElementById("updatedLabel").innerText = t.updated
+  document.getElementById("stationHeader").innerText = t.station
+}
+
+const savedLang = localStorage.getItem("lang") || "ru"
+applyLang(savedLang)
+</script>
+
 </body>
 </html>

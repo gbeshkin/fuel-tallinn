@@ -1,7 +1,7 @@
 {
   "source": "https://www.1182.ee/fuelprices",
   "as_of": "3/3/26",
-  "fetched_at_utc": "2026-03-03T12:35:13+00:00",
+  "fetched_at_utc": "2026-03-03T12:41:07+00:00",
   "region": "Tallinn",
   "items": [
     {
@@ -12,14 +12,14 @@
         "diesel": 1.434
       },
       "deltas": {
-        "95": null,
-        "98": null,
-        "diesel": null
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "new",
-        "98": "new",
-        "diesel": "new"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       }
     },
     {
@@ -30,14 +30,14 @@
         "diesel": 1.529
       },
       "deltas": {
-        "95": null,
-        "98": null,
-        "diesel": null
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "new",
-        "98": "new",
-        "diesel": "new"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       }
     },
     {
@@ -48,14 +48,14 @@
         "diesel": 1.529
       },
       "deltas": {
-        "95": null,
-        "98": null,
-        "diesel": null
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "new",
-        "98": "new",
-        "diesel": "new"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       }
     },
     {
@@ -66,14 +66,14 @@
         "diesel": 1.529
       },
       "deltas": {
-        "95": null,
-        "98": null,
-        "diesel": null
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "new",
-        "98": "new",
-        "diesel": "new"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       }
     }
   ]
