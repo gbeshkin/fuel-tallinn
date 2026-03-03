@@ -99,7 +99,6 @@ def main():
         })
 
     payload = {
-        "source": URL,
         "as_of": as_of,
         "fetched_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "region": "Tallinn",
