@@ -82,7 +82,6 @@ function applyLang(lang) {{
 
   document.documentElement.lang = lang
   document.getElementById("title").innerText = t.title
-  document.getElementById("sourceLabel").innerText = t.source
   document.getElementById("asofLabel").innerText = t.asof
   document.getElementById("updatedLabel").innerText = t.updated
   document.getElementById("stationHeader").innerText = t.station
