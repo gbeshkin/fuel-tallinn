@@ -33,7 +33,7 @@ jobs:
 
       - name: Fetch + Render
         run: |
-          python scripts/fetch_1182.py
+          python scripts/fetch_fuelest.py
           python scripts/render_site.py
 
       - name: Commit changes
