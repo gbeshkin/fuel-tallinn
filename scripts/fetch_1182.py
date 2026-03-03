@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 URL = "https://www.1182.ee/fuelprices"
 OUT = Path("docs/data/prices.json")
 
-# Координаты для текущего набора станций (можно расширять)
 STATION_COORDS = {
     "Krooning Hiiu Pärnu mnt 327a": {"lat": 59.3779, "lon": 24.6666},
     "Alexela Ehitajate tee 114c": {"lat": 59.4247, "lon": 24.6813},
