@@ -1,1 +1,80 @@
-
+{
+  "source": "https://www.1182.ee/fuelprices",
+  "as_of": "3/3/26",
+  "fetched_at_utc": "2026-03-03T12:35:13+00:00",
+  "region": "Tallinn",
+  "items": [
+    {
+      "station": "Krooning Hiiu Pärnu mnt 327a",
+      "prices": {
+        "95": 1.494,
+        "98": 1.499,
+        "diesel": 1.434
+      },
+      "deltas": {
+        "95": null,
+        "98": null,
+        "diesel": null
+      },
+      "trends": {
+        "95": "new",
+        "98": "new",
+        "diesel": "new"
+      }
+    },
+    {
+      "station": "Alexela Ehitajate tee 114c",
+      "prices": {
+        "95": 1.579,
+        "98": 1.639,
+        "diesel": 1.529
+      },
+      "deltas": {
+        "95": null,
+        "98": null,
+        "diesel": null
+      },
+      "trends": {
+        "95": "new",
+        "98": "new",
+        "diesel": "new"
+      }
+    },
+    {
+      "station": "Olerex Laki 29",
+      "prices": {
+        "95": 1.579,
+        "98": 1.579,
+        "diesel": 1.529
+      },
+      "deltas": {
+        "95": null,
+        "98": null,
+        "diesel": null
+      },
+      "trends": {
+        "95": "new",
+        "98": "new",
+        "diesel": "new"
+      }
+    },
+    {
+      "station": "Circle K Sõpruse pst. 200b",
+      "prices": {
+        "95": 1.579,
+        "98": 1.639,
+        "diesel": 1.529
+      },
+      "deltas": {
+        "95": null,
+        "98": null,
+        "diesel": null
+      },
+      "trends": {
+        "95": "new",
+        "98": "new",
+        "diesel": "new"
+      }
+    }
+  ]
+}
