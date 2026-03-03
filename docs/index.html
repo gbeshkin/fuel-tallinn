@@ -5,18 +5,28 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fuel prices — Tallinn</title>
 
+  <!-- Leaflet (карта) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }
-    .topbar { display:flex; justify-content:space-between; align-items:center; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; }
     .lang button { margin-left:8px; padding:6px 10px; cursor:pointer; }
     .meta { color:#555; margin:16px 0; line-height:1.5; }
-    table { border-collapse: collapse; width:100%; max-width:980px; }
-    th, td { border:1px solid #ddd; padding:10px; text-align:left; }
+
+    #map { height: 360px; width: 100%; max-width: 980px; border:1px solid #ddd; border-radius: 10px; }
+
+    table { border-collapse: collapse; width:100%; max-width:980px; margin-top: 16px; }
+    th, td { border:1px solid #ddd; padding:10px; text-align:left; vertical-align: middle; }
     th { background:#f6f6f6; }
     .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .cell { display:inline-flex; gap:10px; align-items:baseline; justify-content:flex-end; width:100%; }
+    .delta { font-size:12px; }
     .up { color:#b00020; }
     .down { color:#0a7a0a; }
     .same { color:#666; }
+    .section-title { margin: 16px 0 8px; font-weight: 700; }
   </style>
 </head>
 
@@ -31,10 +41,12 @@
 </div>
 
 <div class="meta">
-  <span id="sourceLabel"></span>: <a href="https://www.1182.ee/fuelprices">https://www.1182.ee/fuelprices</a><br/>
   <span id="asofLabel"></span>: <b>3/3/26</b><br/>
-  <span id="updatedLabel"></span> (UTC): <b>2026-03-03T12:56:17+00:00</b>
+  <span id="updatedLabel"></span> (UTC): <b>2026-03-03T13:03:24+00:00</b>
 </div>
+
+<div class="section-title" id="mapTitle"></div>
+<div id="map"></div>
 
 <table>
   <thead>
@@ -46,10 +58,10 @@
     </tr>
   </thead>
   <tbody>
-    <tr><td>Krooning Hiiu Pärnu mnt 327a</td><td class='num'>1.494 <span class='same'>● 0.000</span></td><td class='num'>1.499 <span class='same'>● 0.000</span></td><td class='num'>1.434 <span class='same'>● 0.000</span></td></tr>
-<tr><td>Alexela Ehitajate tee 114c</td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.639 <span class='same'>● 0.000</span></td><td class='num'>1.529 <span class='same'>● 0.000</span></td></tr>
-<tr><td>Olerex Laki 29</td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.529 <span class='same'>● 0.000</span></td></tr>
-<tr><td>Circle K Sõpruse pst. 200b</td><td class='num'>1.579 <span class='same'>● 0.000</span></td><td class='num'>1.639 <span class='same'>● 0.000</span></td><td class='num'>1.529 <span class='same'>● 0.000</span></td></tr>
+    <tr><td>Krooning Hiiu Pärnu mnt 327a</td><td class='num'><span class='cell'><span>1.494</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.499</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.434</span><span class='delta'><span class='same'>● 0.000</span></span></span></td></tr>
+<tr><td>Alexela Ehitajate tee 114c</td><td class='num'><span class='cell'><span>1.579</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.639</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.529</span><span class='delta'><span class='same'>● 0.000</span></span></span></td></tr>
+<tr><td>Olerex Laki 29</td><td class='num'><span class='cell'><span>1.579</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.579</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.529</span><span class='delta'><span class='same'>● 0.000</span></span></span></td></tr>
+<tr><td>Circle K Sõpruse pst. 200b</td><td class='num'><span class='cell'><span>1.579</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.639</span><span class='delta'><span class='same'>● 0.000</span></span></span></td><td class='num'><span class='cell'><span>1.529</span><span class='delta'><span class='same'>● 0.000</span></span></span></td></tr>
   </tbody>
 </table>
 
@@ -59,13 +71,15 @@ const translations = {
     title: "Цены на топливо в Таллинн",
     asof: "Данные “as of”",
     updated: "Обновлено",
-    station: "Сеть / станция"
+    station: "Сеть / станция",
+    mapTitle: "Карта заправок"
   },
   et: {
-    title: "Kütusehinnad Tallinn",
+    title: "Kütusehinnad Tallinnas",
     asof: "Andmed “seisuga”",
     updated: "Uuendatud",
-    station: "Võrk / tankla"
+    station: "Võrk / tankla",
+    mapTitle: "Tanklate kaart"
   }
 }
 
@@ -76,16 +90,50 @@ function setLang(lang) {
 
 function applyLang(lang) {
   const t = translations[lang]
-
   document.documentElement.lang = lang
   document.getElementById("title").innerText = t.title
   document.getElementById("asofLabel").innerText = t.asof
   document.getElementById("updatedLabel").innerText = t.updated
   document.getElementById("stationHeader").innerText = t.station
+  document.getElementById("mapTitle").innerText = t.mapTitle
 }
 
 const savedLang = localStorage.getItem("lang") || "ru"
 applyLang(savedLang)
+
+// ----- Map -----
+const stations = [{"station": "Krooning Hiiu Pärnu mnt 327a", "location": {"lat": 59.3779, "lon": 24.6666}, "prices": {"95": 1.494, "98": 1.499, "diesel": 1.434}}, {"station": "Alexela Ehitajate tee 114c", "location": {"lat": 59.4247, "lon": 24.6813}, "prices": {"95": 1.579, "98": 1.639, "diesel": 1.529}}, {"station": "Olerex Laki 29", "location": {"lat": 59.4258, "lon": 24.723}, "prices": {"95": 1.579, "98": 1.579, "diesel": 1.529}}, {"station": "Circle K Sõpruse pst. 200b", "location": {"lat": 59.4036, "lon": 24.7373}, "prices": {"95": 1.579, "98": 1.639, "diesel": 1.529}}];
+
+// Tallinn center
+const map = L.map('map').setView([59.4370, 24.7536], 11);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+let anyMarker = false;
+
+stations.forEach(s => {
+  if (!s.location) return;
+  anyMarker = true;
+  const lat = s.location.lat;
+  const lon = s.location.lon;
+
+  const popup = `
+    <b>${s.station}</b><br/>
+    95: ${s.prices["95"].toFixed(3)}<br/>
+    98: ${s.prices["98"].toFixed(3)}<br/>
+    Diesel: ${s.prices["diesel"].toFixed(3)}
+  `;
+
+  L.marker([lat, lon]).addTo(map).bindPopup(popup);
+});
+
+if (!anyMarker) {
+  // если вдруг координат нет — покажем весь Таллинн без маркеров
+  map.setView([59.4370, 24.7536], 11);
+}
 </script>
 
 </body>

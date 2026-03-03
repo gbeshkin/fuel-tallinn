@@ -1,11 +1,15 @@
 {
   "source": "https://www.1182.ee/fuelprices",
   "as_of": "3/3/26",
-  "fetched_at_utc": "2026-03-03T12:56:17+00:00",
+  "fetched_at_utc": "2026-03-03T13:03:24+00:00",
   "region": "Tallinn",
   "items": [
     {
       "station": "Krooning Hiiu Pärnu mnt 327a",
+      "location": {
+        "lat": 59.3779,
+        "lon": 24.6666
+      },
       "prices": {
         "95": 1.494,
         "98": 1.499,
@@ -24,6 +28,10 @@
     },
     {
       "station": "Alexela Ehitajate tee 114c",
+      "location": {
+        "lat": 59.4247,
+        "lon": 24.6813
+      },
       "prices": {
         "95": 1.579,
         "98": 1.639,
@@ -42,6 +50,10 @@
     },
     {
       "station": "Olerex Laki 29",
+      "location": {
+        "lat": 59.4258,
+        "lon": 24.723
+      },
       "prices": {
         "95": 1.579,
         "98": 1.579,
@@ -60,6 +72,10 @@
     },
     {
       "station": "Circle K Sõpruse pst. 200b",
+      "location": {
+        "lat": 59.4036,
+        "lon": 24.7373
+      },
       "prices": {
         "95": 1.579,
         "98": 1.639,
