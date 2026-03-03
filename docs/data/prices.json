@@ -1,11 +1,14 @@
 {
-  "source": "https://www.1182.ee/fuelprices",
+  "source": {
+    "1182": "https://www.1182.ee/fuelprices"
+  },
   "as_of": "3/3/26",
-  "fetched_at_utc": "2026-03-03T17:09:20+00:00",
+  "fetched_at_utc": "2026-03-03T17:48:27+00:00",
   "region": "Tallinn",
   "items": [
     {
       "station": "Krooning Hiiu Pärnu mnt 327a",
+      "source": "1182",
       "location": {
         "lat": 59.3779,
         "lon": 24.6666
@@ -28,6 +31,7 @@
     },
     {
       "station": "Alexela Ehitajate tee 114c",
+      "source": "1182",
       "location": {
         "lat": 59.4247,
         "lon": 24.6813
@@ -46,10 +50,12 @@
         "95": "same",
         "98": "same",
         "diesel": "same"
-      }
+      },
+      "_as_of_1182": "3/3/26"
     },
     {
       "station": "Olerex Laki 29",
+      "source": "1182",
       "location": {
         "lat": 59.4258,
         "lon": 24.723
@@ -68,10 +74,12 @@
         "95": "same",
         "98": "same",
         "diesel": "same"
-      }
+      },
+      "_as_of_1182": "3/3/26"
     },
     {
       "station": "Circle K Sõpruse pst. 200b",
+      "source": "1182",
       "location": {
         "lat": 59.4036,
         "lon": 24.7373
@@ -90,7 +98,8 @@
         "95": "same",
         "98": "same",
         "diesel": "same"
-      }
+      },
+      "_as_of_1182": "3/3/26"
     }
   ]
 }
