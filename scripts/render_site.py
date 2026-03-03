@@ -13,8 +13,10 @@ def badge(trend: str, delta):
         return f"<span class='down'>▼ {delta:.3f}</span>"
     return "<span class='same'>● 0.000</span>"
 
-def cell(price: float, trend: str, delta):
-    return f"<span class='cell'><span>{price:.3f}</span><span class='delta'>{badge(trend, delta)}</span></span>"
+def cell(price, trend: str, delta):
+    if price is None:
+        return "<span class='same'>—</span>"
+    return f"<span class='cell'><span class='price'>{float(price):.3f}</span><span class='delta'>{badge(trend, delta)}</span></span>"
 
 HTML = """<!doctype html>
 <html lang="ru">
@@ -28,57 +30,223 @@ HTML = """<!doctype html>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
-    body {{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }}
-    .topbar {{ display:flex; justify-content:space-between; align-items:center; gap:12px; }}
-    .lang button {{ margin-left:8px; padding:6px 10px; cursor:pointer; }}
-    .meta {{ color:#555; margin:16px 0; line-height:1.5; }}
+    :root {{
+      --border:#ddd;
+      --muted:#555;
+      --bghead:#f6f6f6;
+      --up:#b00020;
+      --down:#0a7a0a;
+      --same:#666;
+    }}
 
-    #map {{ height: 360px; width: 100%; max-width: 980px; border:1px solid #ddd; border-radius: 10px; }}
+    body {{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      margin: 24px;
+    }}
 
-    table {{ border-collapse: collapse; width:100%; max-width:980px; margin-top: 16px; }}
-    th, td {{ border:1px solid #ddd; padding:10px; text-align:left; vertical-align: middle; }}
-    th {{ background:#f6f6f6; }}
-    .num {{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }}
-    .cell {{ display:inline-flex; gap:10px; align-items:baseline; justify-content:flex-end; width:100%; }}
-    .delta {{ font-size:12px; }}
-    .up {{ color:#b00020; }}
-    .down {{ color:#0a7a0a; }}
-    .same {{ color:#666; }}
-    .section-title {{ margin: 16px 0 8px; font-weight: 700; }}
+    .wrap {{
+      max-width: 980px;
+    }}
+
+    .topbar {{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap: wrap;
+    }}
+
+    h1 {{
+      margin: 0;
+      font-size: 44px;
+      line-height: 1.05;
+    }}
+
+    .lang {{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }}
+
+    .lang button {{
+      padding:8px 12px;
+      border:1px solid var(--border);
+      background:white;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+    }}
+
+    .lang button.active {{
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }}
+
+    .meta {{
+      color: var(--muted);
+      margin: 14px 0 16px;
+      line-height: 1.5;
+      font-size: 16px;
+    }}
+
+    .section-title {{
+      margin: 14px 0 8px;
+      font-weight: 800;
+      font-size: 18px;
+    }}
+
+    #map {{
+      height: 360px;
+      width: 100%;
+      border:1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }}
+
+    /* TABLE (desktop) */
+    table {{
+      border-collapse: collapse;
+      width:100%;
+      margin-top: 16px;
+    }}
+    th, td {{
+      border:1px solid var(--border);
+      padding:12px 12px;
+      text-align:left;
+      vertical-align: middle;
+    }}
+    th {{
+      background: var(--bghead);
+      font-size: 18px;
+    }}
+    td {{
+      font-size: 18px;
+    }}
+    .num {{
+      text-align:right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      width: 160px;
+    }}
+
+    .cell {{
+      display:inline-flex;
+      gap:10px;
+      align-items: baseline;
+      justify-content:flex-end;
+      width:100%;
+    }}
+    .price {{
+      font-weight: 700;
+    }}
+    .delta {{
+      font-size: 12px;
+    }}
+    .up {{ color: var(--up); }}
+    .down {{ color: var(--down); }}
+    .same {{ color: var(--same); }}
+
+    /* Mobile cards */
+    .cards {{
+      display:none;
+      margin-top: 14px;
+      gap: 12px;
+    }}
+    .card {{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+    }}
+    .card h3 {{
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      line-height: 1.2;
+    }}
+    .grid {{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 12px;
+    }}
+    .kv {{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 10px;
+      border:1px solid var(--border);
+      border-radius: 12px;
+      background: #fafafa;
+      font-variant-numeric: tabular-nums;
+    }}
+    .k {{
+      color: var(--muted);
+      font-weight: 700;
+    }}
+    .v {{
+      text-align:right;
+    }}
+
+    /* Responsive breakpoints */
+    @media (max-width: 820px) {{
+      h1 {{ font-size: 34px; }}
+      th, td {{ font-size: 16px; }}
+      .num {{ width: 140px; }}
+      #map {{ height: 300px; }}
+    }}
+
+    @media (max-width: 620px) {{
+      body {{ margin: 16px; }}
+      h1 {{ font-size: 30px; }}
+      .meta {{ font-size: 14px; }}
+      #map {{ height: 240px; }}
+      table {{ display:none; }}
+      .cards {{ display:flex; flex-direction: column; }}
+    }}
   </style>
 </head>
 
 <body>
+  <div class="wrap">
 
-<div class="topbar">
-  <h1 id="title"></h1>
-  <div class="lang">
-    <button onclick="setLang('ru')">RU</button>
-    <button onclick="setLang('et')">ET</button>
+    <div class="topbar">
+      <h1 id="title"></h1>
+      <div class="lang">
+        <button id="btn-ru" onclick="setLang('ru')">RU</button>
+        <button id="btn-et" onclick="setLang('et')">ET</button>
+      </div>
+    </div>
+
+    <div class="meta">
+      <span id="asofLabel"></span>: <b>{as_of}</b><br/>
+      <span id="updatedLabel"></span> (UTC): <b>{fetched_at}</b>
+    </div>
+
+    <div class="section-title" id="mapTitle"></div>
+    <div id="map"></div>
+
+    <!-- Desktop table -->
+    <table>
+      <thead>
+        <tr>
+          <th id="stationHeader"></th>
+          <th class="num">95</th>
+          <th class="num">98</th>
+          <th class="num">Diesel</th>
+          <th class="num">CNG</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows}
+      </tbody>
+    </table>
+
+    <!-- Mobile cards -->
+    <div class="cards" id="cards">
+      {cards}
+    </div>
+
   </div>
-</div>
-
-<div class="meta">
-  <span id="asofLabel"></span>: <b>{as_of}</b><br/>
-  <span id="updatedLabel"></span> (UTC): <b>{fetched_at}</b>
-</div>
-
-<div class="section-title" id="mapTitle"></div>
-<div id="map"></div>
-
-<table>
-  <thead>
-    <tr>
-      <th id="stationHeader"></th>
-      <th class="num">95</th>
-      <th class="num">98</th>
-      <th class="num">Diesel</th>
-    </tr>
-  </thead>
-  <tbody>
-    {rows}
-  </tbody>
-</table>
 
 <script>
 const translations = {{
@@ -106,11 +274,15 @@ function setLang(lang) {{
 function applyLang(lang) {{
   const t = translations[lang]
   document.documentElement.lang = lang
+
   document.getElementById("title").innerText = t.title
   document.getElementById("asofLabel").innerText = t.asof
   document.getElementById("updatedLabel").innerText = t.updated
   document.getElementById("stationHeader").innerText = t.station
   document.getElementById("mapTitle").innerText = t.mapTitle
+
+  document.getElementById("btn-ru").classList.toggle("active", lang === "ru")
+  document.getElementById("btn-et").classList.toggle("active", lang === "et")
 }}
 
 const savedLang = localStorage.getItem("lang") || "ru"
@@ -119,7 +291,6 @@ applyLang(savedLang)
 // ----- Map -----
 const stations = {stations_json};
 
-// Tallinn center
 const map = L.map('map').setView([59.4370, 24.7536], 11);
 
 L.tileLayer('https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
@@ -132,17 +303,19 @@ let anyMarker = false;
 stations.forEach(s => {{
   if (!s.location) return;
   anyMarker = true;
-  const lat = s.location.lat;
-  const lon = s.location.lon;
 
   const popup = `
     <b>${{s.station}}</b><br/>
     95: ${{s.prices["95"].toFixed(3)}}<br/>
     98: ${{s.prices["98"].toFixed(3)}}<br/>
-    Diesel: ${{s.prices["diesel"].toFixed(3)}}
+    Diesel: ${{s.prices["diesel"].toFixed(3)}}<br/>
+    ${{
+      (s.prices["cng"] !== undefined && s.prices["cng"] !== null)
+        ? ("CNG: " + s.prices["cng"].toFixed(3))
+        : "CNG: —"
+    }}
   `;
-
-  L.marker([lat, lon]).addTo(map).bindPopup(popup);
+  L.marker([s.location.lat, s.location.lon]).addTo(map).bindPopup(popup);
 }});
 
 if (!anyMarker) {{
@@ -158,26 +331,38 @@ def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
 
     rows = []
+    cards = []
+
     for it in data["items"]:
         p = it["prices"]
         t = it.get("trends", {})
         d = it.get("deltas", {})
+
         rows.append(
             "<tr>"
             f"<td>{it['station']}</td>"
-            f"<td class='num'>{cell(p['95'], t.get('95','new'), d.get('95'))}</td>"
-            f"<td class='num'>{cell(p['98'], t.get('98','new'), d.get('98'))}</td>"
-            f"<td class='num'>{cell(p['diesel'], t.get('diesel','new'), d.get('diesel'))}</td>"
+            f"<td class='num'>{cell(p.get('95'), t.get('95','new'), d.get('95'))}</td>"
+            f"<td class='num'>{cell(p.get('98'), t.get('98','new'), d.get('98'))}</td>"
+            f"<td class='num'>{cell(p.get('diesel'), t.get('diesel','new'), d.get('diesel'))}</td>"
+            f"<td class='num'>{cell(p.get('cng'), t.get('cng','new'), d.get('cng'))}</td>"
             "</tr>"
+        )
+
+        cards.append(
+            "<div class='card'>"
+            f"<h3>{it['station']}</h3>"
+            "<div class='grid'>"
+            f"<div class='kv'><div class='k'>95</div><div class='v'>{cell(p.get('95'), t.get('95','new'), d.get('95'))}</div></div>"
+            f"<div class='kv'><div class='k'>98</div><div class='v'>{cell(p.get('98'), t.get('98','new'), d.get('98'))}</div></div>"
+            f"<div class='kv'><div class='k'>Diesel</div><div class='v'>{cell(p.get('diesel'), t.get('diesel','new'), d.get('diesel'))}</div></div>"
+            f"<div class='kv'><div class='k'>CNG</div><div class='v'>{cell(p.get('cng'), t.get('cng','new'), d.get('cng'))}</div></div>"
+            "</div>"
+            "</div>"
         )
 
     stations_json = json.dumps(
         [
-            {
-                "station": it["station"],
-                "location": it.get("location"),
-                "prices": it["prices"],
-            }
+            {"station": it["station"], "location": it.get("location"), "prices": it["prices"]}
             for it in data["items"]
         ],
         ensure_ascii=False
@@ -188,6 +373,7 @@ def main():
             as_of=data.get("as_of") or "—",
             fetched_at=data["fetched_at_utc"],
             rows="\n".join(rows),
+            cards="\n".join(cards),
             stations_json=stations_json,
         ),
         encoding="utf-8",

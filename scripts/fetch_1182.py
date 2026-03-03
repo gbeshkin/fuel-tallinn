@@ -70,6 +70,7 @@ def main():
     p95 = row_map("95")
     p98 = row_map("98")
     diesel = row_map("Diesel")
+    cng = row_map("CNG")  # ← ДОБАВИЛИ
 
     if not (p95 and p98 and diesel):
         raise RuntimeError("Не нашёл строки 95/98/Diesel. Возможно изменилась таблица.")
@@ -84,9 +85,12 @@ def main():
             "diesel": _clean_num(diesel[i]),
         }
 
+        if cng and i < len(cng):
+            cur["cng"] = _clean_num(cng[i])
+
         prev_prices = prev_by_station.get(station, {})
         deltas, trends = {}, {}
-        for k in ("95", "98", "diesel"):
+        for k in cur.keys():
             if k in prev_prices:
                 d = round(cur[k] - float(prev_prices[k]), 3)
                 deltas[k] = d
