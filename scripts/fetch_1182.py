@@ -9,12 +9,19 @@ from bs4 import BeautifulSoup
 URL = "https://www.1182.ee/fuelprices"
 OUT = Path("docs/data/prices.json")
 
+# Координаты для текущего набора станций (можно расширять)
+STATION_COORDS = {
+    "Krooning Hiiu Pärnu mnt 327a": {"lat": 59.3779, "lon": 24.6666},
+    "Alexela Ehitajate tee 114c": {"lat": 59.4247, "lon": 24.6813},
+    "Olerex Laki 29": {"lat": 59.4258, "lon": 24.7230},
+    "Circle K Sõpruse pst. 200b": {"lat": 59.4036, "lon": 24.7373},
+}
+
 def _clean_num(s: str):
     s = s.strip().replace(",", ".")
     return float(re.sub(r"[^0-9.]", "", s))
 
 def _trend(delta: float, eps: float = 0.0005):
-    # eps ~ половина тысячной, чтобы не мигало на микросдвигах парсинга/форматирования
     if delta > eps:
         return "up"
     if delta < -eps:
@@ -22,7 +29,6 @@ def _trend(delta: float, eps: float = 0.0005):
     return "same"
 
 def main():
-    # загрузим предыдущие данные (если есть)
     prev_by_station = {}
     if OUT.exists():
         try:
@@ -78,10 +84,9 @@ def main():
             "98": _clean_num(p98[i]),
             "diesel": _clean_num(diesel[i]),
         }
-        prev_prices = prev_by_station.get(station, {})
 
-        deltas = {}
-        trends = {}
+        prev_prices = prev_by_station.get(station, {})
+        deltas, trends = {}, {}
         for k in ("95", "98", "diesel"):
             if k in prev_prices:
                 d = round(cur[k] - float(prev_prices[k]), 3)
@@ -93,9 +98,10 @@ def main():
 
         items.append({
             "station": station,
+            "location": STATION_COORDS.get(station),  # {"lat": .., "lon": ..} или None
             "prices": cur,
-            "deltas": deltas,   
-            "trends": trends,   
+            "deltas": deltas,
+            "trends": trends,
         })
 
     payload = {
