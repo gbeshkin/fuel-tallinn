@@ -8,7 +8,6 @@ import requests
 from bs4 import BeautifulSoup
 
 URL_1182 = "https://www.1182.ee/fuelprices"
-URL_FUELEST = "https://fuelest.ee/"
 OUT = Path("docs/data/prices.json")
 
 STATION_COORDS = {
@@ -193,117 +192,6 @@ def _is_tallinn_station(st: Dict[str, Any]) -> bool:
     addr = str(st.get("address") or st.get("displayName") or st.get("name") or "").lower()
     return "tallinn" in addr
 
-def fetch_fuelest_cng_items(prev_by_station: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
-
-    try:
-        from playwright.sync_api import sync_playwright  # type: ignore
-    except Exception as e:
-        raise RuntimeError(
-            "Для FuelEst нужен Playwright (Python). "
-            "Добавь playwright в зависимости и установи браузеры: `python -m playwright install chromium`."
-        ) from e
-
-    captured_json: List[Any] = []
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-
-        def on_response(resp):
-            try:
-                ct = resp.headers.get("content-type", "")
-                if "application/json" not in ct.lower():
-                    return
-                j = resp.json()
-                captured_json.append(j)
-            except Exception:
-                pass
-
-        page.on("response", on_response)
-        page.goto(URL_FUELEST, wait_until="networkidle", timeout=60000)
-
-        page.wait_for_timeout(2500)
-
-        browser.close()
-
-    station_lists: List[List[Dict[str, Any]]] = []
-    for obj in captured_json:
-        if isinstance(obj, dict):
-            for v in obj.values():
-                if _looks_like_station_list(v):
-                    station_lists.append(v)  # type: ignore
-        if _looks_like_station_list(obj):
-            station_lists.append(obj)  # type: ignore
-
-    if not station_lists:
-        raise RuntimeError("Не удалось найти список станций в JSON ответах FuelEst (возможно изменили API).")
-
-    stations = max(station_lists, key=len)
-
-    items: List[Dict[str, Any]] = []
-
-    for st in stations:
-        if not isinstance(st, dict):
-            continue
-
-        if not _is_tallinn_station(st):
-            continue
-
-        cng_price = _extract_cng_from_station_obj(st)
-        if cng_price is None:
-            continue
-
-        lat = st.get("lat") or st.get("latitude")
-        lon = st.get("lon") or st.get("lng") or st.get("longitude")
-
-        try:
-            lat_f = float(lat)
-            lon_f = float(lon)
-            loc = {"lat": lat_f, "lon": lon_f}
-        except Exception:
-            loc = None
-
-        company = (st.get("companyName") or st.get("company") or st.get("brand") or "").strip()
-        addr = (st.get("address") or st.get("displayName") or st.get("name") or "").strip()
-
-        # чтобы ключ станции был стабильным
-        station_name = (f"{company} {addr}".strip() if company else addr) or "CNG station"
-
-        # только CNG (остальные None)
-        cur = {"95": None, "98": None, "diesel": None, "cng": cng_price}
-
-        prev_prices = prev_by_station.get(station_name, {})
-        deltas: Dict[str, Optional[float]] = {}
-        trends: Dict[str, str] = {}
-
-        for k, v in cur.items():
-            if v is None:
-                deltas[k] = None
-                trends[k] = "new"
-                continue
-
-            if k in prev_prices and prev_prices.get(k) is not None:
-                try:
-                    d = round(float(v) - float(prev_prices[k]), 3)
-                except Exception:
-                    d = None
-                deltas[k] = d
-                trends[k] = _trend(d)
-            else:
-                deltas[k] = None
-                trends[k] = "new"
-
-        items.append({
-            "station": station_name,
-            "source": "fuelest",
-            "location": loc,
-            "prices": cur,
-            "deltas": deltas,
-            "trends": trends,
-        })
-
-    items.sort(key=lambda x: (0 if x["prices"].get("cng") is not None else 1, x["station"].lower()))
-    return items
 
 def main():
     prev_by_station = _load_prev_prices()
@@ -316,26 +204,20 @@ def main():
         if as_of_1182:
             break
 
-    items_cng = fetch_fuelest_cng_items(prev_by_station)
 
     payload = {
         "source": {
             "1182": URL_1182,
-            "fuelest": URL_FUELEST,
         },
-        "as_of": as_of_1182,  # оставим as_of как у 1182 (у FuelEst это “последние 24 часа”)
+        "as_of": as_of_1182,
         "fetched_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "region": "Tallinn",
-        "items": items_1182 + items_cng,
-        "notes": {
-            "cng_unit": "€/kg (FuelEst)",
-            "disclaimer": "FuelEst hinnad põhinevad kasutajate sisestatud infol.",
-        }
+        "items": items_1182,
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Saved {OUT} with {len(payload['items'])} stations (1182={len(items_1182)}, fuelest_cng={len(items_cng)})")
+    print(f"Saved {OUT} with {len(payload['items'])} stations (1182={len(items_1182)})")
 
 if __name__ == "__main__":
     main()

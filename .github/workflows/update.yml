@@ -31,12 +31,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Playwright and browsers
-        run: |
-          pip install playwright
-          python -m playwright install chromium
-          python -m playwright install-deps
-
       - name: Fetch + Render
         run: |
           python scripts/fetch_1182.py
