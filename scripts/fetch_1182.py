@@ -94,11 +94,12 @@ def main():
         items.append({
             "station": station,
             "prices": cur,
-            "deltas": deltas,   # разница к прошлому запуску
-            "trends": trends,   # up/down/same/new
+            "deltas": deltas,   
+            "trends": trends,   
         })
 
     payload = {
+        "source": URL,
         "as_of": as_of,
         "fetched_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "region": "Tallinn",
