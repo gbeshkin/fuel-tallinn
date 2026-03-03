@@ -104,7 +104,6 @@ HTML = """<!doctype html>
       overflow: hidden;
     }}
 
-    /* TABLE (desktop) */
     table {{
       border-collapse: collapse;
       width:100%;
@@ -147,7 +146,6 @@ HTML = """<!doctype html>
     .down {{ color: var(--down); }}
     .same {{ color: var(--same); }}
 
-    /* Mobile cards */
     .cards {{
       display:none;
       margin-top: 14px;
@@ -187,7 +185,6 @@ HTML = """<!doctype html>
       text-align:right;
     }}
 
-    /* Responsive breakpoints */
     @media (max-width: 820px) {{
       h1 {{ font-size: 34px; }}
       th, td {{ font-size: 16px; }}
@@ -219,13 +216,13 @@ HTML = """<!doctype html>
 
     <div class="meta">
       <span id="asofLabel"></span>: <b>{as_of}</b><br/>
-      <span id="updatedLabel"></span> (UTC): <b>{fetched_at}</b>
+      <span id="updatedLabel"></span> (UTC): <b>{fetched_at}</b><br/>
+      <span id="noteCng"></span>: <span id="cngUnit"></span>
     </div>
 
     <div class="section-title" id="mapTitle"></div>
     <div id="map"></div>
 
-    <!-- Desktop table -->
     <table>
       <thead>
         <tr>
@@ -241,7 +238,6 @@ HTML = """<!doctype html>
       </tbody>
     </table>
 
-    <!-- Mobile cards -->
     <div class="cards" id="cards">
       {cards}
     </div>
@@ -251,18 +247,22 @@ HTML = """<!doctype html>
 <script>
 const translations = {{
   ru: {{
-    title: "Цены на топливо в Таллинн",
+    title: "Цены на топливо в Таллинне",
     asof: "Данные “as of”",
     updated: "Обновлено",
     station: "Сеть / станция",
-    mapTitle: "Карта заправок"
+    mapTitle: "Карта заправок",
+    cngNote: "CNG",
+    cngUnit: "в FuelEst обычно в €/кг"
   }},
   et: {{
     title: "Kütusehinnad Tallinnas",
     asof: "Andmed “seisuga”",
     updated: "Uuendatud",
     station: "Võrk / tankla",
-    mapTitle: "Tanklate kaart"
+    mapTitle: "Tanklate kaart",
+    cngNote: "CNG",
+    cngUnit: "FuelEst-is tavaliselt €/kg"
   }}
 }}
 
@@ -280,6 +280,8 @@ function applyLang(lang) {{
   document.getElementById("updatedLabel").innerText = t.updated
   document.getElementById("stationHeader").innerText = t.station
   document.getElementById("mapTitle").innerText = t.mapTitle
+  document.getElementById("noteCng").innerText = t.cngNote
+  document.getElementById("cngUnit").innerText = t.cngUnit
 
   document.getElementById("btn-ru").classList.toggle("active", lang === "ru")
   document.getElementById("btn-et").classList.toggle("active", lang === "et")
@@ -298,27 +300,42 @@ L.tileLayer('https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
   attribution: '&copy; OpenStreetMap contributors'
 }}).addTo(map);
 
+function fmt3(v) {{
+  if (v === undefined || v === null || Number.isNaN(v)) return "—";
+  const n = Number(v);
+  if (Number.isNaN(n)) return "—";
+  return n.toFixed(3);
+}}
+
 let anyMarker = false;
+const bounds = [];
 
 stations.forEach(s => {{
   if (!s.location) return;
   anyMarker = true;
 
+  const p95 = (s.prices && s.prices["95"] !== null) ? fmt3(s.prices["95"]) : "—";
+  const p98 = (s.prices && s.prices["98"] !== null) ? fmt3(s.prices["98"]) : "—";
+  const diesel = (s.prices && s.prices["diesel"] !== null) ? fmt3(s.prices["diesel"]) : "—";
+
+  const hasCng = (s.prices && s.prices["cng"] !== undefined && s.prices["cng"] !== null);
+  const cng = hasCng ? (fmt3(s.prices["cng"]) + " (€/кг)") : "—";
+
   const popup = `
     <b>${{s.station}}</b><br/>
-    95: ${{s.prices["95"].toFixed(3)}}<br/>
-    98: ${{s.prices["98"].toFixed(3)}}<br/>
-    Diesel: ${{s.prices["diesel"].toFixed(3)}}<br/>
-    ${{
-      (s.prices["cng"] !== undefined && s.prices["cng"] !== null)
-        ? ("CNG: " + s.prices["cng"].toFixed(3))
-        : "CNG: —"
-    }}
+    95: ${{p95}}<br/>
+    98: ${{p98}}<br/>
+    Diesel: ${{diesel}}<br/>
+    CNG: ${{cng}}
   `;
-  L.marker([s.location.lat, s.location.lon]).addTo(map).bindPopup(popup);
+
+  const marker = L.marker([s.location.lat, s.location.lon]).addTo(map).bindPopup(popup);
+  bounds.push([s.location.lat, s.location.lon]);
 }});
 
-if (!anyMarker) {{
+if (anyMarker && bounds.length > 1) {{
+  map.fitBounds(bounds, {{ padding: [20, 20] }});
+}} else {{
   map.setView([59.4370, 24.7536], 11);
 }}
 </script>
