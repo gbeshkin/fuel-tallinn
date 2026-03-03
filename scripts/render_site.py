@@ -217,7 +217,6 @@ HTML = """<!doctype html>
     <div class="meta">
       <span id="asofLabel"></span>: <b>{as_of}</b><br/>
       <span id="updatedLabel"></span> (UTC): <b>{fetched_at}</b><br/>
-      <span id="noteCng"></span>: <span id="cngUnit"></span>
     </div>
 
     <div class="section-title" id="mapTitle"></div>
@@ -230,7 +229,6 @@ HTML = """<!doctype html>
           <th class="num">95</th>
           <th class="num">98</th>
           <th class="num">Diesel</th>
-          <th class="num">CNG</th>
         </tr>
       </thead>
       <tbody>
@@ -252,8 +250,6 @@ const translations = {{
     updated: "Обновлено",
     station: "Сеть / станция",
     mapTitle: "Карта заправок",
-    cngNote: "CNG",
-    cngUnit: "в FuelEst обычно в €/кг"
   }},
   et: {{
     title: "Kütusehinnad Tallinnas",
@@ -261,8 +257,6 @@ const translations = {{
     updated: "Uuendatud",
     station: "Võrk / tankla",
     mapTitle: "Tanklate kaart",
-    cngNote: "CNG",
-    cngUnit: "FuelEst-is tavaliselt €/kg"
   }}
 }}
 
@@ -280,8 +274,7 @@ function applyLang(lang) {{
   document.getElementById("updatedLabel").innerText = t.updated
   document.getElementById("stationHeader").innerText = t.station
   document.getElementById("mapTitle").innerText = t.mapTitle
-  document.getElementById("noteCng").innerText = t.cngNote
-  document.getElementById("cngUnit").innerText = t.cngUnit
+
 
   document.getElementById("btn-ru").classList.toggle("active", lang === "ru")
   document.getElementById("btn-et").classList.toggle("active", lang === "et")
@@ -318,15 +311,13 @@ stations.forEach(s => {{
   const p98 = (s.prices && s.prices["98"] !== null) ? fmt3(s.prices["98"]) : "—";
   const diesel = (s.prices && s.prices["diesel"] !== null) ? fmt3(s.prices["diesel"]) : "—";
 
-  const hasCng = (s.prices && s.prices["cng"] !== undefined && s.prices["cng"] !== null);
-  const cng = hasCng ? (fmt3(s.prices["cng"]) + " (€/кг)") : "—";
+  
 
   const popup = `
     <b>${{s.station}}</b><br/>
     95: ${{p95}}<br/>
     98: ${{p98}}<br/>
     Diesel: ${{diesel}}<br/>
-    CNG: ${{cng}}
   `;
 
   const marker = L.marker([s.location.lat, s.location.lon]).addTo(map).bindPopup(popup);
@@ -361,7 +352,6 @@ def main():
             f"<td class='num'>{cell(p.get('95'), t.get('95','new'), d.get('95'))}</td>"
             f"<td class='num'>{cell(p.get('98'), t.get('98','new'), d.get('98'))}</td>"
             f"<td class='num'>{cell(p.get('diesel'), t.get('diesel','new'), d.get('diesel'))}</td>"
-            f"<td class='num'>{cell(p.get('cng'), t.get('cng','new'), d.get('cng'))}</td>"
             "</tr>"
         )
 
@@ -372,7 +362,6 @@ def main():
             f"<div class='kv'><div class='k'>95</div><div class='v'>{cell(p.get('95'), t.get('95','new'), d.get('95'))}</div></div>"
             f"<div class='kv'><div class='k'>98</div><div class='v'>{cell(p.get('98'), t.get('98','new'), d.get('98'))}</div></div>"
             f"<div class='kv'><div class='k'>Diesel</div><div class='v'>{cell(p.get('diesel'), t.get('diesel','new'), d.get('diesel'))}</div></div>"
-            f"<div class='kv'><div class='k'>CNG</div><div class='v'>{cell(p.get('cng'), t.get('cng','new'), d.get('cng'))}</div></div>"
             "</div>"
             "</div>"
         )
