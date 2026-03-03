@@ -1,0 +1,45 @@
+name: Update fuel prices (Tallinn)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # ВАЖНО: GitHub cron = UTC. :contentReference[oaicite:2]{index=2}
+    # Пример: 06:12 UTC и 18:12 UTC (не на "ровном" часе — меньше риск задержек). :contentReference[oaicite:3]{index=3}
+    - cron: "12 6 * * *"
+    - cron: "12 18 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fuel-update
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch + Render
+        run: |
+          python scripts/fetch_1182.py
+          python scripts/render_site.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "fuel-tallinn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/data/prices.json docs/index.html
+          git commit -m "Update fuel prices" || exit 0
+          git push
