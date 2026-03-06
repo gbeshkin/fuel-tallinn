@@ -2,8 +2,8 @@
   "source": {
     "1182": "https://www.1182.ee/fuelprices"
   },
-  "as_of": "5/3/26",
-  "fetched_at_utc": "2026-03-06T07:07:15+00:00",
+  "as_of": "6/3/26",
+  "fetched_at_utc": "2026-03-06T19:03:36+00:00",
   "region": "Tallinn",
   "items": [
     {
@@ -14,19 +14,19 @@
         "lon": 24.6666
       },
       "prices": {
-        "95": 1.55,
-        "98": 1.555,
-        "diesel": 1.545
+        "95": 1.561,
+        "98": 1.566,
+        "diesel": 1.623
       },
       "deltas": {
-        "95": 0.0,
-        "98": 0.0,
-        "diesel": 0.0
+        "95": 0.011,
+        "98": 0.011,
+        "diesel": 0.078
       },
       "trends": {
-        "95": "same",
-        "98": "same",
-        "diesel": "same"
+        "95": "up",
+        "98": "up",
+        "diesel": "up"
       }
     },
     {
@@ -51,7 +51,7 @@
         "98": "same",
         "diesel": "same"
       },
-      "_as_of_1182": "5/3/26"
+      "_as_of_1182": "6/3/26"
     },
     {
       "station": "Olerex Laki 29",
@@ -75,7 +75,7 @@
         "98": "same",
         "diesel": "same"
       },
-      "_as_of_1182": "5/3/26"
+      "_as_of_1182": "6/3/26"
     },
     {
       "station": "Circle K Sõpruse pst. 200b",
@@ -99,7 +99,7 @@
         "98": "same",
         "diesel": "same"
       },
-      "_as_of_1182": "5/3/26"
+      "_as_of_1182": "6/3/26"
     }
   ]
 }
