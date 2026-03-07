@@ -3,7 +3,7 @@
     "1182": "https://www.1182.ee/fuelprices"
   },
   "as_of": "6/3/26",
-  "fetched_at_utc": "2026-03-06T19:03:36+00:00",
+  "fetched_at_utc": "2026-03-07T06:58:09+00:00",
   "region": "Tallinn",
   "items": [
     {
@@ -19,14 +19,14 @@
         "diesel": 1.623
       },
       "deltas": {
-        "95": 0.011,
-        "98": 0.011,
-        "diesel": 0.078
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "up",
-        "98": "up",
-        "diesel": "up"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       }
     },
     {
