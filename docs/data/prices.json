@@ -3,7 +3,7 @@
     "1182": "https://www.1182.ee/fuelprices"
   },
   "as_of": "9/3/26",
-  "fetched_at_utc": "2026-03-09T19:10:15+00:00",
+  "fetched_at_utc": "2026-03-10T07:07:16+00:00",
   "region": "Tallinn",
   "items": [
     {
@@ -19,14 +19,14 @@
         "diesel": 1.767
       },
       "deltas": {
-        "95": 0.111,
-        "98": 0.111,
-        "diesel": 0.144
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "up",
-        "98": "up",
-        "diesel": "up"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       }
     },
     {
@@ -42,14 +42,14 @@
         "diesel": 1.609
       },
       "deltas": {
-        "95": -0.145,
-        "98": -0.145,
-        "diesel": -0.15
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "down",
-        "98": "down",
-        "diesel": "down"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       },
       "_as_of_1182": "9/3/26"
     },
@@ -66,14 +66,14 @@
         "diesel": 1.629
       },
       "deltas": {
-        "95": -0.125,
-        "98": -0.125,
-        "diesel": -0.13
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "down",
-        "98": "down",
-        "diesel": "down"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       },
       "_as_of_1182": "9/3/26"
     },
@@ -90,14 +90,14 @@
         "diesel": 1.634
       },
       "deltas": {
-        "95": -0.12,
-        "98": -0.12,
-        "diesel": -0.105
+        "95": 0.0,
+        "98": 0.0,
+        "diesel": 0.0
       },
       "trends": {
-        "95": "down",
-        "98": "down",
-        "diesel": "down"
+        "95": "same",
+        "98": "same",
+        "diesel": "same"
       },
       "_as_of_1182": "9/3/26"
     }
